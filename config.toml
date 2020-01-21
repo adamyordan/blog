@@ -1,0 +1,42 @@
+baseurl = "https://blog.adamjordan.id/"
+languageCode = "en-us"
+theme = "hello-friend"
+paginate = 5
+disqusShortname = "adam-blog"
+googleAnalytics = "UA-124774114-2"
+
+[params]
+  contentTypeName = "posts"
+  defaultTheme = "light"
+  showMenuItems = 2
+  showReadingTime = true
+
+[languages]
+  [languages.en]
+    title = "Adam Jordan's Blog"
+    subtitle = "Things I am interested in"
+    keywords = ""
+    copyright = ""
+    menuMore = "Show more"
+    writtenBy = "Written by"
+    readMore = "Read more"
+    readOtherPosts = "Read other posts"
+    newerPosts = "Newer posts"
+    olderPosts = "Older posts"
+    minuteReadingTime = "min read"
+    dateFormatSingle = "02-01-2006"
+    dateFormatList = "02-01-2006"
+
+    [languages.en.params.logo]
+      logoText = "Adam Jordan's Blog"
+      logoHomeLink = "/"
+
+    [languages.en.menu]
+      [[languages.en.menu.main]]
+        identifier = "about"
+        name = "About"
+        url = "/about"
+      [[languages.en.menu.main]]
+        identifier = "archive"
+        name = "Archive"
+        url = "/archive"
