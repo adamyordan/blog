@@ -23,6 +23,15 @@ Find me on:
     </item>
     
     <item>
+      <title>A Case Study on Jenkins RCE</title>
+      <link>https://blog.adamjordan.id/posts/001-case-study-on-jenkins-rce/</link>
+      <pubDate>Mon, 20 Jan 2020 17:40:00 +0800</pubDate>
+      
+      <guid>https://blog.adamjordan.id/posts/001-case-study-on-jenkins-rce/</guid>
+      <description>During my past experience assessing the security of Jenkins, I found several things I personally deemed interesting, such as how to craft RCE payload by analyzing patches and how critical the information a Jenkins instance possesses. In this post, I will walk through each step starting from initial information gathering to potential post-exploitation techniques in a Jenkins instance. I will discuss the thinking process and the possible damage impacted in case of compromise.</description>
+    </item>
+    
+    <item>
       <title>Archive</title>
       <link>https://blog.adamjordan.id/archive/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>

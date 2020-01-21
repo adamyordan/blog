@@ -13,15 +13,31 @@
   </url>
   
   <url>
+    <loc>https://blog.adamjordan.id/posts/001-case-study-on-jenkins-rce/</loc>
+    <lastmod>2020-01-20T17:40:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.adamjordan.id/posts/</loc>
+    <lastmod>2020-01-20T17:40:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.adamjordan.id/tags/security/</loc>
+    <lastmod>2020-01-20T17:40:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.adamjordan.id/tags/</loc>
+    <lastmod>2020-01-20T17:40:00+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://blog.adamjordan.id/archive/</loc>
   </url>
   
   <url>
     <loc>https://blog.adamjordan.id/categories/</loc>
-  </url>
-  
-  <url>
-    <loc>https://blog.adamjordan.id/tags/</loc>
   </url>
   
 </urlset>
