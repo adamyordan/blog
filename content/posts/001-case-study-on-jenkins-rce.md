@@ -8,7 +8,7 @@ I will discuss the thinking process and the possible damage impacted in case of 
 "
 tags: [Security]
 date: 2020-01-20T17:40:00+08:00
-draft: true
+draft: false
 ---
 
 During my past experience assessing the security of Jenkins, I found several things I personally deemed interesting,
