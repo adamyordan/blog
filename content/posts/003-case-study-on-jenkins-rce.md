@@ -6,8 +6,8 @@ such as how to craft RCE payload by analyzing patches and how critical the infor
 In this post, I will walk through each step starting from initial information gathering to potential post-exploitation techniques in a Jenkins instance.
 I will discuss the thinking process and the possible damage impacted in case of compromise.
 "
-tags: [Security]
-date: 2020-01-20T17:40:00+08:00
+tags: [security]
+date: 2020-01-21T17:40:00+08:00
 draft: false
 ---
 

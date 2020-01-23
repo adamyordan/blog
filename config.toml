@@ -8,7 +8,7 @@ googleAnalytics = "UA-124774114-2"
 [params]
   contentTypeName = "posts"
   defaultTheme = "light"
-  showMenuItems = 2
+  showMenuItems = 3
   showReadingTime = true
 
 [languages]
@@ -33,10 +33,17 @@ googleAnalytics = "UA-124774114-2"
 
     [languages.en.menu]
       [[languages.en.menu.main]]
-        identifier = "about"
-        name = "About"
-        url = "/about"
+        identifier = "security"
+        name = "Security"
+        url = "/security"
+        weight = 1
       [[languages.en.menu.main]]
         identifier = "archive"
         name = "Archive"
         url = "/archive"
+        weight = 2
+      [[languages.en.menu.main]]
+        identifier = "about"
+        name = "About"
+        url = "/about"
+        weight = 3
