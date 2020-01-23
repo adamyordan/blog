@@ -3,33 +3,63 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://blog.adamjordan.id/posts/003-case-study-on-jenkins-rce/</loc>
+    <lastmod>2020-01-21T17:40:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.adamjordan.id/</loc>
+    <lastmod>2020-01-21T17:40:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.adamjordan.id/posts/</loc>
+    <lastmod>2020-01-21T17:40:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.adamjordan.id/tags/security/</loc>
+    <lastmod>2020-01-21T17:40:00+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.adamjordan.id/tags/</loc>
+    <lastmod>2020-01-21T17:40:00+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://blog.adamjordan.id/about/</loc>
     <lastmod>2020-01-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://blog.adamjordan.id/</loc>
-    <lastmod>2020-01-21T00:00:00+00:00</lastmod>
+    <loc>https://blog.adamjordan.id/tags/ai/</loc>
+    <lastmod>2019-09-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://blog.adamjordan.id/posts/001-case-study-on-jenkins-rce/</loc>
-    <lastmod>2020-01-20T17:40:00+08:00</lastmod>
+    <loc>https://blog.adamjordan.id/tags/devlog/</loc>
+    <lastmod>2019-09-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://blog.adamjordan.id/posts/</loc>
-    <lastmod>2020-01-20T17:40:00+08:00</lastmod>
+    <loc>https://blog.adamjordan.id/tags/hunter-ai/</loc>
+    <lastmod>2019-09-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://blog.adamjordan.id/tags/security/</loc>
-    <lastmod>2020-01-20T17:40:00+08:00</lastmod>
+    <loc>https://blog.adamjordan.id/posts/002-hunterai-connecting-agent-with-unity/</loc>
+    <lastmod>2019-09-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://blog.adamjordan.id/tags/</loc>
-    <lastmod>2020-01-20T17:40:00+08:00</lastmod>
+    <loc>https://blog.adamjordan.id/tags/unity/</loc>
+    <lastmod>2019-09-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://blog.adamjordan.id/posts/001-hunterai-creating-simple-intelligent-agent/</loc>
+    <lastmod>2019-09-16T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -38,6 +68,10 @@
   
   <url>
     <loc>https://blog.adamjordan.id/categories/</loc>
+  </url>
+  
+  <url>
+    <loc>https://blog.adamjordan.id/security/</loc>
   </url>
   
 </urlset>

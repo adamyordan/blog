@@ -6,10 +6,19 @@
     <description>Recent content on Adam Jordan&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 21 Jan 2020 17:40:00 +0800</lastBuildDate>
     
 	<atom:link href="https://blog.adamjordan.id/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>A Case Study on Jenkins RCE</title>
+      <link>https://blog.adamjordan.id/posts/003-case-study-on-jenkins-rce/</link>
+      <pubDate>Tue, 21 Jan 2020 17:40:00 +0800</pubDate>
+      
+      <guid>https://blog.adamjordan.id/posts/003-case-study-on-jenkins-rce/</guid>
+      <description>During my past experience assessing the security of Jenkins, I found several things I personally deemed interesting, such as how to craft RCE payload by analyzing patches and how critical the information a Jenkins instance possesses. In this post, I will walk through each step starting from initial information gathering to potential post-exploitation techniques in a Jenkins instance. I will discuss the thinking process and the possible damage impacted in case of compromise.</description>
+    </item>
     
     <item>
       <title>About</title>
@@ -23,12 +32,25 @@ Find me on:
     </item>
     
     <item>
-      <title>A Case Study on Jenkins RCE</title>
-      <link>https://blog.adamjordan.id/posts/001-case-study-on-jenkins-rce/</link>
-      <pubDate>Mon, 20 Jan 2020 17:40:00 +0800</pubDate>
+      <title>HunterAI #2: Connecting AI Agent with Unity</title>
+      <link>https://blog.adamjordan.id/posts/002-hunterai-connecting-agent-with-unity/</link>
+      <pubDate>Thu, 19 Sep 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://blog.adamjordan.id/posts/001-case-study-on-jenkins-rce/</guid>
-      <description>During my past experience assessing the security of Jenkins, I found several things I personally deemed interesting, such as how to craft RCE payload by analyzing patches and how critical the information a Jenkins instance possesses. In this post, I will walk through each step starting from initial information gathering to potential post-exploitation techniques in a Jenkins instance. I will discuss the thinking process and the possible damage impacted in case of compromise.</description>
+      <guid>https://blog.adamjordan.id/posts/002-hunterai-connecting-agent-with-unity/</guid>
+      <description>About HunterAI
+This is a series of my project devlog to create a certain complex AI. In each devlog, I will write about my progress in developing and upgrading the complexity of the AI program from the previous version.
+ Today&amp;rsquo;s Goal In this post, I will try to create a 3D visualization using Unity and connect it to our agent written in python. You may want to read the previous post about Alexander AI concept because we will reuse a lot of the concepts.</description>
+    </item>
+    
+    <item>
+      <title>HunterAI #1 : Creating Simple Intelligent Agent</title>
+      <link>https://blog.adamjordan.id/posts/001-hunterai-creating-simple-intelligent-agent/</link>
+      <pubDate>Mon, 16 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.adamjordan.id/posts/001-hunterai-creating-simple-intelligent-agent/</guid>
+      <description>About HunterAI
+This is a series of my project devlog to create a certain complex AI. In each devlog, I will write about my progress in developing and upgrading the complexity of the AI program from the previous version.
+ Today&amp;rsquo;s Goal In this article, I will try to make an intelligent agent that can hunt monster. I name this agent: Hunter. (In the future, today&amp;rsquo;s version will be referenced as Alexander)</description>
     </item>
     
     <item>
@@ -37,6 +59,15 @@ Find me on:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://blog.adamjordan.id/archive/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Security</title>
+      <link>https://blog.adamjordan.id/security/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.adamjordan.id/security/</guid>
       <description></description>
     </item>
     
