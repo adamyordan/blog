@@ -6,10 +6,21 @@
     <description>Recent content in Posts on Adam Jordan&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 21 Jan 2020 17:40:00 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 24 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://blog.adamjordan.id/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>SecTips #Jan20</title>
+      <link>https://blog.adamjordan.id/posts/004-sectips-jan2020/</link>
+      <pubDate>Fri, 24 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.adamjordan.id/posts/004-sectips-jan2020/</guid>
+      <description>About SecTips
+This is a series in which I will write some tips related to security engineering. Instead of discussing heavy and long topics, I will present some fun things in a concise walkthrough format.
+ Happy new year 2020! In this month&amp;rsquo;s SecTips, I will give some tips about how to create an unremovable file in UNIX, how to use AT for backdoor persistence, and how to listen to meterpreter with a laptop behind NAT.</description>
+    </item>
     
     <item>
       <title>A Case Study on Jenkins RCE</title>
