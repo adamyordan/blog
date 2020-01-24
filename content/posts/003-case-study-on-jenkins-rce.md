@@ -58,17 +58,17 @@ In the repository, we can see that the patches are blacklisting some annotations
 We can see that there is a difference in how `GroovySandbox` class creates the _compiler configuration_.
 There is an additional step that add _compilation customizer_ `RejectASTTransformsCustomizer` that with a the disabled transformations of only a single value: `GrabAnnotationTransformation.class.getName()`.
 
-![Compiler Configuration Diff](/post_assets/001/commit-compiler-configuration.png)
+![Compiler Configuration Diff](/post_assets/003/commit-compiler-configuration.png)
 
 
 The `RejectASTTransformsCustomizer` is a new class with a logic that traverse annotations and do simple blacklist checking:
 
-![Reject Transformation Commit](/post_assets/001/commit-reject-transformation.png)
+![Reject Transformation Commit](/post_assets/003/commit-reject-transformation.png)
 
 
 We can also see that there is a new test code that check if the blacklist `Grab` annotation.
 
-![Test Code Commit](/post_assets/001/commit-test-code.png)
+![Test Code Commit](/post_assets/003/commit-test-code.png)
 
 
 ## The Grab Annotation
@@ -123,12 +123,12 @@ print new ProcBuilder("/bin/bash").withArgs("-c","cat /etc/passwd").run().getOut
 
 Let's try putting the pipeline script in a Jenkins Job with _Use Groovy Sandbox_ enabled.
 
-![Job Script in Jenkins](/post_assets/001/jenkins-job-script.png)
+![Job Script in Jenkins](/post_assets/003/jenkins-job-script.png)
 
 
 After triggering the job build, the script above will be compiled and executed in Jenkins master. After the job build is done, we can see the result of the shell command `cat /etc/passwd` in the job console output.
 
-![Passwd exposed in Jenkins](/post_assets/001/jenkins-passwd.png)
+![Passwd exposed in Jenkins](/post_assets/003/jenkins-passwd.png)
 
 
 Furthermore, we can work on getting the reverse shell session using the same method.
@@ -171,7 +171,7 @@ In an older Jenkins version, if a user has generated access tokens before, those
 We can use this access token to authenticate in Jenkins Web dashboard by setting it in `Authorization` HTTP Header.
 For demonstration, we can use curl to do _whoami_ in Jenkins:
 
-![Account Hijack](/post_assets/001/post-whoami.png)
+![Account Hijack](/post_assets/003/post-whoami.png)
 
 
 #### Maintaining Persistence
@@ -179,7 +179,7 @@ For demonstration, we can use curl to do _whoami_ in Jenkins:
 Apart from regular maintaining persistence techniques, such as using crontab, or injecting `.bashrc`, we can utilize the hijacked Jenkins admin account.
 Jenkins provides a script console functionality that can be used admin to execute arbitrary Groovy script in **non-sandbox** mode.
 
-![Script Console](/post_assets/001/post-console.png)
+![Script Console](/post_assets/003/post-console.png)
 
 Moreover, we can also use this console to enumerate stored secrets in Jenkins with the following script:
 
@@ -194,7 +194,7 @@ println ''
 println credentials[0]['username'] + ':' + credentials[0]['password']
 ```
 
-![Enumerate Credential in Console](/post_assets/001/post-credential.png)
+![Enumerate Credential in Console](/post_assets/003/post-credential.png)
 
 Furthermore, most of the time Jenkins will also store a Git user **SSH Key**.
 This is because of its nature as a CI/CD service, Jenkins usually store the SSH Key to **pull source code** and **deploy to production servers**.
@@ -223,7 +223,7 @@ We can learn from the past incidents that the damage is fatal:
 
 We need to also be aware that Jenkins is an old piece of software written in early 2000s and may contains many legacy code and bugs.
 
-![Jenkins Vulnerabilities](/post_assets/001/verdict-vulns.png)
+![Jenkins Vulnerabilities](/post_assets/003/verdict-vulns.png)
 
 From the charts ([source](https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865)) displayed above,
 we can see that Jenkins are affected by lots of critical vulnerabilities, especially in recent years.
