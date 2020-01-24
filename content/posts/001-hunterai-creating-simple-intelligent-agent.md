@@ -315,7 +315,7 @@ After running step, we will see that our **Hunter** should shoot the monster.
 
 ```python
 >>> debug(world)
-DEBUG:root:[time:1] monster_visible is False
+DEBUG:root:[time:1] monster_visible is True
 
 >>> simulator.step()
 DEBUG:root:Pew! Shooting monster
