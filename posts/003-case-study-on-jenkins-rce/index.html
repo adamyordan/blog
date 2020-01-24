@@ -194,15 +194,15 @@ We can find the related commit in <a href="https://bugzilla.redhat.com/show_bug.
 <p>We can see that there is a difference in how <code>GroovySandbox</code> class creates the <em>compiler configuration</em>.
 There is an additional step that add <em>compilation customizer</em> <code>RejectASTTransformsCustomizer</code> that with a the disabled transformations of only a single value: <code>GrabAnnotationTransformation.class.getName()</code>.</p>
 
-<p><img src="/post_assets/001/commit-compiler-configuration.png" alt="Compiler Configuration Diff" /></p>
+<p><img src="/post_assets/003/commit-compiler-configuration.png" alt="Compiler Configuration Diff" /></p>
 
 <p>The <code>RejectASTTransformsCustomizer</code> is a new class with a logic that traverse annotations and do simple blacklist checking:</p>
 
-<p><img src="/post_assets/001/commit-reject-transformation.png" alt="Reject Transformation Commit" /></p>
+<p><img src="/post_assets/003/commit-reject-transformation.png" alt="Reject Transformation Commit" /></p>
 
 <p>We can also see that there is a new test code that check if the blacklist <code>Grab</code> annotation.</p>
 
-<p><img src="/post_assets/001/commit-test-code.png" alt="Test Code Commit" /></p>
+<p><img src="/post_assets/003/commit-test-code.png" alt="Test Code Commit" /></p>
 
 <h2 id="the-grab-annotation">The Grab Annotation</h2>
 
@@ -252,11 +252,11 @@ print new ProcBuilder(&quot;/bin/bash&quot;).withArgs(&quot;-c&quot;,&quot;cat /
 
 <p>Let&rsquo;s try putting the pipeline script in a Jenkins Job with <em>Use Groovy Sandbox</em> enabled.</p>
 
-<p><img src="/post_assets/001/jenkins-job-script.png" alt="Job Script in Jenkins" /></p>
+<p><img src="/post_assets/003/jenkins-job-script.png" alt="Job Script in Jenkins" /></p>
 
 <p>After triggering the job build, the script above will be compiled and executed in Jenkins master. After the job build is done, we can see the result of the shell command <code>cat /etc/passwd</code> in the job console output.</p>
 
-<p><img src="/post_assets/001/jenkins-passwd.png" alt="Passwd exposed in Jenkins" /></p>
+<p><img src="/post_assets/003/jenkins-passwd.png" alt="Passwd exposed in Jenkins" /></p>
 
 <p>Furthermore, we can work on getting the reverse shell session using the same method.</p>
 
@@ -296,14 +296,14 @@ In an older Jenkins version, if a user has generated access tokens before, those
 <p>We can use this access token to authenticate in Jenkins Web dashboard by setting it in <code>Authorization</code> HTTP Header.
 For demonstration, we can use curl to do <em>whoami</em> in Jenkins:</p>
 
-<p><img src="/post_assets/001/post-whoami.png" alt="Account Hijack" /></p>
+<p><img src="/post_assets/003/post-whoami.png" alt="Account Hijack" /></p>
 
 <h4 id="maintaining-persistence">Maintaining Persistence</h4>
 
 <p>Apart from regular maintaining persistence techniques, such as using crontab, or injecting <code>.bashrc</code>, we can utilize the hijacked Jenkins admin account.
 Jenkins provides a script console functionality that can be used admin to execute arbitrary Groovy script in <strong>non-sandbox</strong> mode.</p>
 
-<p><img src="/post_assets/001/post-console.png" alt="Script Console" /></p>
+<p><img src="/post_assets/003/post-console.png" alt="Script Console" /></p>
 
 <p>Moreover, we can also use this console to enumerate stored secrets in Jenkins with the following script:</p>
 
@@ -317,7 +317,7 @@ println ''
 println credentials[0]['username'] + ':' + credentials[0]['password']
 </code></pre>
 
-<p><img src="/post_assets/001/post-credential.png" alt="Enumerate Credential in Console" /></p>
+<p><img src="/post_assets/003/post-credential.png" alt="Enumerate Credential in Console" /></p>
 
 <p>Furthermore, most of the time Jenkins will also store a Git user <strong>SSH Key</strong>.
 This is because of its nature as a CI/CD service, Jenkins usually store the SSH Key to <strong>pull source code</strong> and <strong>deploy to production servers</strong>.
@@ -346,7 +346,7 @@ Being a central CI/CD service, compromising Jenkins will lead attackers to gain 
 
 <p>We need to also be aware that Jenkins is an old piece of software written in early 2000s and may contains many legacy code and bugs.</p>
 
-<p><img src="/post_assets/001/verdict-vulns.png" alt="Jenkins Vulnerabilities" /></p>
+<p><img src="/post_assets/003/verdict-vulns.png" alt="Jenkins Vulnerabilities" /></p>
 
 <p>From the charts (<a href="https://www.cvedetails.com/product/34004/Jenkins-Jenkins.html?vendor_id=15865">source</a>) displayed above,
 we can see that Jenkins are affected by lots of critical vulnerabilities, especially in recent years.
