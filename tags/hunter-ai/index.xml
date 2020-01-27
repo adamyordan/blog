@@ -6,10 +6,21 @@
     <description>Recent content in hunter-ai on Adam Jordan&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 19 Sep 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 27 Jan 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://blog.adamjordan.id/tags/hunter-ai/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>HunterAI #3: Top-down Shooter AI</title>
+      <link>https://blog.adamjordan.id/posts/005-hunterai3-topdown-shooter-ai/</link>
+      <pubDate>Mon, 27 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.adamjordan.id/posts/005-hunterai3-topdown-shooter-ai/</guid>
+      <description>About HunterAI
+This is a series of my project devlog to create a certain complex AI. In each devlog, I will write about my progress in developing and upgrading the complexity of the AI program from the previous version.
+ Today&amp;rsquo;s Goal In this post, I will try to create a reflex agent with internal state in an imperfect information environment. The agent is a top-down shooter with a limited vision range, therefore it needs to store information about the map it already visited.</description>
+    </item>
     
     <item>
       <title>HunterAI #2: Connecting AI Agent with Unity</title>
