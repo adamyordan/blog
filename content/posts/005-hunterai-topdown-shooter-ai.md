@@ -1,7 +1,7 @@
 ---
 title: "HunterAI #3: Top-down Shooter AI"
 author: "Adam Jordan"
-date: 2020-01-27
+date: 2020-01-28
 description: "In this post, I will try to create a **reflex agent with internal state** in an imperfect information environment.
 The agent is a top-down shooter with a limited vision range, therefore it needs to store information about the map it already visited.
 Furthermore, it needs to make a rational decision to find the enemies and make necessary actions shoot them.
