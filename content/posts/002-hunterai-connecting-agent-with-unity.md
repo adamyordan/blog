@@ -423,7 +423,7 @@ public class SimulatorScript : MonoBehaviour
 
 ## Demo & Conclusion
 
-{{< youtube P3zoo9JVg3w >}}
+{{< youtube id="P3zoo9JVg3w" autoplay="true" >}}
 
 Today, we learned how to connect an Intelligent agent with a Unity scene.
 The Unity scene acts as a visualization or a frontend for our agent.
