@@ -21,7 +21,7 @@ I made this post to help me organize my thought in trying to understand the bug 
 Google Chrome is based on Chromium, an open-source browser that is also forked into several other popular browsers, e.g. Opera, and Microsoft Edge.
 
 
-{{< figure src="/post_assets/006/architecture_processes.png" position="center" style="max-width: 500px;" caption="Chromium separated processes" captionPosition="center" >}}
+{{< figure src="/post_assets/006/architecture_processes.png" position="center" style="width: 100%; max-width: 500px;" caption="Chromium separated processes" captionPosition="center" >}}
 
 
 Chromium's architecture allocates the components into separated process between the browser kernel process and the rendering engine process.
@@ -29,14 +29,14 @@ We can roughly say that the renderer process represent the _Tab_ (though one ren
 So, in a chrome instance, there are 1 Browser Process and several Renderer Process.
 
 
-{{< figure src="/post_assets/006/architecture_ui.png" position="center" style="max-width: 600px;" caption="UI Representation with Chromium processes" captionPosition="center" >}}
+{{< figure src="/post_assets/006/architecture_ui.png" position="center" style="width: 100%; max-width: 600px;" caption="UI Representation with Chromium processes" captionPosition="center" >}}
 
 
 Also because of this architecture, if a web page is misbehaving and causes a process to crash, this will not crash the whole browser.
 Instead, it will only crash the specific tab opening the page.
 
 
-{{< figure src="/post_assets/006/architecture_crash.png" position="center" style="max-width: 600px;" caption="Tab crash does not affect browser" captionPosition="center" >}}
+{{< figure src="/post_assets/006/architecture_crash.png" position="center" style="width: 100%; max-width: 600px;" caption="Tab crash does not affect browser" captionPosition="center" >}}
 
 
 The renderer process is responsible for operations that need fast performance, such as HTML and CSS parsing, Javascript interpreter, Regex, DOM, etc.
@@ -47,7 +47,7 @@ According to this paper [_The Security Architecture of the Chromium Browser_](ht
 So, the chance to compromise the renderer process is higher than compromising the browser process, which lead to a solution of **sandboxing** the renderer process.
 
 
-{{< figure src="/post_assets/006/architecture_vulns.png" position="center" style="max-width: 500px;" caption="" captionPosition="center" >}}
+{{< figure src="/post_assets/006/architecture_vulns.png" position="center" style="width: 100%; max-width: 500px;" caption="" captionPosition="center" >}}
 
 
 By running the renderer process in a sandbox with restricted privilege, we can mitigate high-severity attacks, such as preventing compromised renderer process to read / write to filesystem.
