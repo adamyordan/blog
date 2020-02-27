@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+	<meta name="generator" content="Hugo 0.58.2" />
     
-      <title>security :: Adam Jordan&#39;s Blog — Things I am interested in</title>
+      <title>Adam Jordan&#39;s Blog — Things I am interested in</title>
     
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<meta name="description" content=""/>
+<meta name="description" content="Things I am interested in"/>
 <meta name="keywords" content=""/>
 <meta name="robots" content="noodp"/>
-<link rel="canonical" href="https://blog.adamjordan.id/tags/security/" />
+<link rel="canonical" href="https://blog.adamjordan.id/" />
 
 
 
@@ -26,21 +27,21 @@
 
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="security"/>
+<meta name="twitter:title" content="Adam Jordan&#39;s Blog"/>
 <meta name="twitter:description" content=""/>
 
 
 
-<meta property="og:title" content="security" />
+<meta property="og:title" content="Adam Jordan&#39;s Blog" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://blog.adamjordan.id/tags/security/" />
+<meta property="og:url" content="https://blog.adamjordan.id/" />
 
 <meta property="og:updated_time" content="2020-02-02T17:40:00+08:00" /><meta property="og:site_name" content="Adam Jordan&#39;s Blog" />
 
 
 
-<link rel="alternate" type="application/rss+xml" href="/tags/security/index.xml" title="Adam Jordan's Blog" />
+<link rel="alternate" type="application/rss+xml" href="/index.xml" title="Adam Jordan's Blog" />
 
 
 
@@ -127,20 +128,22 @@
 
     
     
+      
+    
     
 
     
     <div class="post on-list">
-      <h1 class="post-title"><a href="https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/">My Take on Chrome Sandbox Escape Exploit Chain</a></h1>
+      <h1 class="post-title"><a href="https://blog.adamjordan.id/posts/001-hunterai-creating-simple-intelligent-agent/">HunterAI #1 : Creating Simple Intelligent Agent</a></h1>
       <div class="post-meta">
         
           <span class="post-date">
-            02-02-2020
+            16-09-2019
           </span>
         
         <span class="post-author">— Written by Adam Jordan</span>
         
-          <span class="post-read-time">— 11 min read</span>
+          <span class="post-read-time">— 6 min read</span>
         
       </div>
 
@@ -148,7 +151,11 @@
       
         <span class="post-tags">
           
-            #<a href="https://blog.adamjordan.id/tags/security/">security</a>&nbsp;
+            #<a href="https://blog.adamjordan.id/tags/ai/">ai</a>&nbsp;
+          
+            #<a href="https://blog.adamjordan.id/tags/devlog/">devlog</a>&nbsp;
+          
+            #<a href="https://blog.adamjordan.id/tags/hunter-ai/">hunter-ai</a>&nbsp;
           
         </span>
       
@@ -157,85 +164,21 @@
 
       <div class="post-content">
         
-          
-            Google&rsquo;s Project Zero published a blog post explaining an exploit chain that bypass the Chrome browser sandbox. In this post, I will try to discuss my take on trying to understand the exploit chain. In summary, the sandbox bypass is made possible because of an Out-of-bound read and write bug in renderer process, chained with a Use-After-Free (UAF) bug in the browser processs, triggered via Mojo IPC connection.
-As disclaimer, this is not a bug that I find, nor that this is a full writeup about the exploit.
-          
+          Today, I try to make an intelligent agent that can hunt monster. I name this agent: <strong>Hunter</strong>. In this devlog, I will write the understanding and design process of a very simple intelligent agent.
         
       </div>
-      <div><a class="read-more button" href="/posts/006-chrome-sandbox-bypass/">Read more →</a></div>
-    </div>
-    
-    <div class="post on-list">
-      <h1 class="post-title"><a href="https://blog.adamjordan.id/posts/004-sectips-jan2020/">SecTips #Jan20</a></h1>
-      <div class="post-meta">
-        
-          <span class="post-date">
-            24-01-2020
-          </span>
-        
-        <span class="post-author">— Written by Adam Jordan</span>
-        
-          <span class="post-read-time">— 3 min read</span>
-        
-      </div>
-
-
-      
-        <span class="post-tags">
-          
-            #<a href="https://blog.adamjordan.id/tags/security/">security</a>&nbsp;
-          
-            #<a href="https://blog.adamjordan.id/tags/sectips/">sectips</a>&nbsp;
-          
-        </span>
-      
-
-      
-
-      <div class="post-content">
-        
-          Happy new year 2020! In this month&rsquo;s SecTips, I will give some tips about how to create an unremovable file in UNIX, how to use AT for backdoor persistence, and how to listen to meterpreter with a laptop behind NAT.
-        
-      </div>
-      <div><a class="read-more button" href="/posts/004-sectips-jan2020/">Read more →</a></div>
-    </div>
-    
-    <div class="post on-list">
-      <h1 class="post-title"><a href="https://blog.adamjordan.id/posts/003-case-study-on-jenkins-rce/">A Case Study on Jenkins RCE</a></h1>
-      <div class="post-meta">
-        
-          <span class="post-date">
-            21-01-2020
-          </span>
-        
-        <span class="post-author">— Written by Adam Jordan</span>
-        
-          <span class="post-read-time">— 7 min read</span>
-        
-      </div>
-
-
-      
-        <span class="post-tags">
-          
-            #<a href="https://blog.adamjordan.id/tags/security/">security</a>&nbsp;
-          
-        </span>
-      
-
-      
-
-      <div class="post-content">
-        
-          During my past experience assessing the security of Jenkins, I found several things I personally deemed interesting, such as how to craft RCE payload by analyzing patches and how critical the information a Jenkins instance possesses. In this post, I will walk through each step starting from initial information gathering to potential post-exploitation techniques in a Jenkins instance. I will discuss the thinking process and the possible damage impacted in case of compromise.
-        
-      </div>
-      <div><a class="read-more button" href="/posts/003-case-study-on-jenkins-rce/">Read more →</a></div>
+      <div><a class="read-more button" href="/posts/001-hunterai-creating-simple-intelligent-agent/">Read more →</a></div>
     </div>
     
     <div class="pagination">
   <div class="pagination__buttons">
+    
+      <span class="button previous">
+        <a href="/">
+          <span class="button__icon">←</span>
+          <span class="button__text">Newer posts</span>
+        </a>
+      </span>
     
     
   </div>

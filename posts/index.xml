@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Adam Jordan&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 28 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 02 Feb 2020 17:40:00 +0800</lastBuildDate>
     
 	<atom:link href="https://blog.adamjordan.id/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>My Take on Chrome Sandbox Escape Exploit Chain</title>
+      <link>https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/</link>
+      <pubDate>Sun, 02 Feb 2020 17:40:00 +0800</pubDate>
+      
+      <guid>https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/</guid>
+      <description>Google&amp;rsquo;s Project Zero published a blog post explaining an exploit chain that bypass the Chrome browser sandbox. In this post, I will try to discuss my take on trying to understand the exploit chain. In summary, the sandbox bypass is made possible because of an Out-of-bound read and write bug in renderer process, chained with a Use-After-Free (UAF) bug in the browser processs, triggered via Mojo IPC connection.
+As disclaimer, this is not a bug that I find, nor that this is a full writeup about the exploit.</description>
+    </item>
     
     <item>
       <title>HunterAI #3: Top-down Shooter AI</title>
