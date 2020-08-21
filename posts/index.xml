@@ -6,7 +6,7 @@
     <description>Recent content in Posts on Adam Jordan&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 28 Feb 2020 01:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 02 Feb 2020 17:40:00 +0800</lastBuildDate>
     
 	<atom:link href="https://blog.adamjordan.id/posts/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,33 +14,11 @@
     <item>
       <title>My Take on Chrome Sandbox Escape Exploit Chain</title>
       <link>https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/</link>
-      <pubDate>Fri, 28 Feb 2020 01:00:00 +0800</pubDate>
+      <pubDate>Sun, 02 Feb 2020 17:40:00 +0800</pubDate>
       
       <guid>https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/</guid>
       <description>Google&amp;rsquo;s Project Zero published a blog post explaining an exploit chain that bypass the Chrome browser sandbox. In this post, I will try to discuss my take on trying to understand the exploit chain. In summary, the sandbox bypass is made possible because of an Out-of-bound read and write bug in renderer process, chained with a Use-After-Free (UAF) bug in the browser processs, triggered via Mojo IPC connection.
 As disclaimer, this is not a bug that I find, nor that this is a full writeup about the exploit.</description>
-    </item>
-    
-    <item>
-      <title>HunterAI #3: Top-down Shooter AI</title>
-      <link>https://blog.adamjordan.id/posts/005-hunterai-topdown-shooter-ai/</link>
-      <pubDate>Tue, 28 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://blog.adamjordan.id/posts/005-hunterai-topdown-shooter-ai/</guid>
-      <description>About HunterAI
-This is a series of my project devlog to create a certain complex AI. In each devlog, I will write about my progress in developing and upgrading the complexity of the AI program from the previous version.
- Today&amp;rsquo;s Goal In this post, I will try to create a reflex agent with internal state in an imperfect information environment. The agent is a top-down shooter with a limited vision range, therefore it needs to store information about the map it already visited.</description>
-    </item>
-    
-    <item>
-      <title>SecTips #Jan20</title>
-      <link>https://blog.adamjordan.id/posts/004-sectips-jan2020/</link>
-      <pubDate>Fri, 24 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://blog.adamjordan.id/posts/004-sectips-jan2020/</guid>
-      <description>About SecTips
-This is a series in which I will write some tips related to security engineering. Instead of discussing heavy and long topics, I will present some fun things in a concise walkthrough format.
- Happy new year 2020! In this month&amp;rsquo;s SecTips, I will give some tips about how to create an unremovable file in UNIX, how to use AT for backdoor persistence, and how to listen to meterpreter with a laptop behind NAT.</description>
     </item>
     
     <item>
@@ -50,28 +28,6 @@ This is a series in which I will write some tips related to security engineering
       
       <guid>https://blog.adamjordan.id/posts/003-case-study-on-jenkins-rce/</guid>
       <description>During my past experience assessing the security of Jenkins, I found several things I personally deemed interesting, such as how to craft RCE payload by analyzing patches and how critical the information a Jenkins instance possesses. In this post, I will walk through each step starting from initial information gathering to potential post-exploitation techniques in a Jenkins instance. I will discuss the thinking process and the possible damage impacted in case of compromise.</description>
-    </item>
-    
-    <item>
-      <title>HunterAI #2: Connecting AI Agent with Unity</title>
-      <link>https://blog.adamjordan.id/posts/002-hunterai-connecting-agent-with-unity/</link>
-      <pubDate>Thu, 19 Sep 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://blog.adamjordan.id/posts/002-hunterai-connecting-agent-with-unity/</guid>
-      <description>About HunterAI
-This is a series of my project devlog to create a certain complex AI. In each devlog, I will write about my progress in developing and upgrading the complexity of the AI program from the previous version.
- Today&amp;rsquo;s Goal In this post, I will try to create a 3D visualization using Unity and connect it to our agent written in python. You may want to read the previous post about Alexander AI concept because we will reuse a lot of the concepts.</description>
-    </item>
-    
-    <item>
-      <title>HunterAI #1 : Creating Simple Intelligent Agent</title>
-      <link>https://blog.adamjordan.id/posts/001-hunterai-creating-simple-intelligent-agent/</link>
-      <pubDate>Mon, 16 Sep 2019 00:00:00 +0000</pubDate>
-      
-      <guid>https://blog.adamjordan.id/posts/001-hunterai-creating-simple-intelligent-agent/</guid>
-      <description>About HunterAI
-This is a series of my project devlog to create a certain complex AI. In each devlog, I will write about my progress in developing and upgrading the complexity of the AI program from the previous version.
- Today&amp;rsquo;s Goal In this article, I will try to make an intelligent agent that can hunt monster. I name this agent: Hunter. (In the future, today&amp;rsquo;s version will be referenced as Alexander)</description>
     </item>
     
   </channel>

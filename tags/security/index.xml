@@ -6,7 +6,7 @@
     <description>Recent content in security on Adam Jordan&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 28 Feb 2020 01:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 02 Feb 2020 17:40:00 +0800</lastBuildDate>
     
 	<atom:link href="https://blog.adamjordan.id/tags/security/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,22 +14,11 @@
     <item>
       <title>My Take on Chrome Sandbox Escape Exploit Chain</title>
       <link>https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/</link>
-      <pubDate>Fri, 28 Feb 2020 01:00:00 +0800</pubDate>
+      <pubDate>Sun, 02 Feb 2020 17:40:00 +0800</pubDate>
       
       <guid>https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/</guid>
       <description>Google&amp;rsquo;s Project Zero published a blog post explaining an exploit chain that bypass the Chrome browser sandbox. In this post, I will try to discuss my take on trying to understand the exploit chain. In summary, the sandbox bypass is made possible because of an Out-of-bound read and write bug in renderer process, chained with a Use-After-Free (UAF) bug in the browser processs, triggered via Mojo IPC connection.
 As disclaimer, this is not a bug that I find, nor that this is a full writeup about the exploit.</description>
-    </item>
-    
-    <item>
-      <title>SecTips #Jan20</title>
-      <link>https://blog.adamjordan.id/posts/004-sectips-jan2020/</link>
-      <pubDate>Fri, 24 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://blog.adamjordan.id/posts/004-sectips-jan2020/</guid>
-      <description>About SecTips
-This is a series in which I will write some tips related to security engineering. Instead of discussing heavy and long topics, I will present some fun things in a concise walkthrough format.
- Happy new year 2020! In this month&amp;rsquo;s SecTips, I will give some tips about how to create an unremovable file in UNIX, how to use AT for backdoor persistence, and how to listen to meterpreter with a laptop behind NAT.</description>
     </item>
     
     <item>

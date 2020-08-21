@@ -38,8 +38,8 @@ As disclaimer, this is not a bug that I find, nor that this is a full writeup ab
 As disclaimer, this is not a bug that I find, nor that this is a full writeup about the exploit." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://blog.adamjordan.id/posts/006-chrome-sandbox-bypass/" />
-<meta property="article:published_time" content="2020-02-28T01:00:00+08:00" />
-<meta property="article:modified_time" content="2020-02-28T01:00:00+08:00" /><meta property="og:site_name" content="Adam Jordan&#39;s Blog" />
+<meta property="article:published_time" content="2020-02-02T17:40:00+08:00" />
+<meta property="article:modified_time" content="2020-02-02T17:40:00+08:00" /><meta property="og:site_name" content="Adam Jordan&#39;s Blog" />
 
 
 
@@ -128,7 +128,7 @@ As disclaimer, this is not a bug that I find, nor that this is a full writeup ab
     <div class="post-meta">
       
         <span class="post-date">
-            28-02-2020
+            02-02-2020
         </span>
       
       <span class="post-author">— Written by Adam Jordan</span>
@@ -453,7 +453,7 @@ async function CreateWriter() {
   // create writer from blink.mojom.FileSystemManagerPtr ...
 }
 
-async function Blob0() {
+async function RegisterBlob0() {
   // register blob_0 to blob registry ...
 }
 
@@ -480,7 +480,7 @@ async function crash(oob) {
     }
   };
 
-  Blob0();
+  RegisterBlob0();
 
   let blob_impl = new Blob0Impl();
   let blob_impl_ptr = new blink.mojom.BlobPtr();
@@ -491,7 +491,7 @@ async function crash(oob) {
 }
 </code></pre>
 
-<p>In <code>index.html</code>, we are setting up Out-of-Bound read/write bug by exploiting CVE-2019-5782.
+<p>In <code>index.html</code>, we are setting up the out-of-bound read/write bug by exploiting CVE-2019-5782.
 Then, at first we visit the page, we enable the Mojo binding, and reload the page.
 Now that the Mojo binding is enabled (not undefined), we call the <code>crash</code> function.</p>
 
@@ -528,6 +528,19 @@ Therefore, I recommend reading <a href="googleprojectzero.blogspot.com/2019/04/v
 <li><a href="https://seclab.stanford.edu/websec/chromium/">Stanford paper - The Security Architecture of the Chromium Browser</a></li>
 </ul>
 
+<p><br></p>
+
+<hr />
+
+<blockquote>
+<p>Hi, you can find me on:</p>
+
+<ul>
+<li>twitter: <a href="https://twitter.com/adamyordan">@adamyordan</a></li>
+<li>github: <a href="https://github.com/adamyordan">adamyordan</a></li>
+</ul>
+</blockquote>
+
     </div>
     
       
@@ -540,8 +553,8 @@ Therefore, I recommend reading <a href="googleprojectzero.blogspot.com/2019/04/v
             
             
               <span class="button next">
-                <a href="https://blog.adamjordan.id/posts/005-hunterai-topdown-shooter-ai/">
-                  <span class="button__text">HunterAI #3: Top-down Shooter AI</span>
+                <a href="https://blog.adamjordan.id/posts/003-case-study-on-jenkins-rce/">
+                  <span class="button__text">A Case Study on Jenkins RCE</span>
                   <span class="button__icon">→</span>
                 </a>
               </span>
