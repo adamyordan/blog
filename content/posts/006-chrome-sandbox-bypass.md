@@ -104,14 +104,15 @@ function fun(arg) {
 
 args = []
 args.length = 65537
-console.log(fun(...args)) // output?
+console.log(fun(...args)) // output: ??
 ```
 
-You may notice that if you run that JS code in a javascript console (e.g. Chrome dev console), it will still output `['y']`. Does this means that our exploit does not work?
+You may notice that if you run that JS code in a javascript console (e.g. Chrome dev console), it will still output `['y']`. Does this means that our exploit does not work? This is related to JIT paradigm in Chrome.
 
-Chrome is using V8 Javascript Engine which implementing JIT (Just-in-Time) paradigm, which combines the use of interpreter and compiler for executing code.
-Basically, a code will be executed with interpreter (_Ignition_) by default, and V8 will keep track of how many times the code segments are executed.
-If the code segments are executed many times (hot code segments), the code segments will be compiled with a compiler (_TurboFan_).
+Chrome is using V8 Javascript Engine which implementing **JIT (Just-in-Time)** paradigm, which combines the use of interpreter and compiler for executing code.
+
+Basically, a code will be executed with **interpreter (_Ignition_)** by default, and V8 will keep track of how many times the code segments are executed.
+If the code segments are executed many times (hot code segments), the code segments will be compiled with a **compiler (_TurboFan_)**.
 In this compilation, optimizations will be applied, thus producing a faster execution time.
 
 
@@ -219,10 +220,21 @@ In a default instance of Chrome browser, the Mojo interface is not exposed and c
 
 Let's limit our goal, we just want to crash the Chrome browser of a normal user running default Chrome instance.
 
+The idea is as follows:
+
+- Victim visit our specially crafted HTML page
+- With CVE-2019-5782, we setup Out-of-Bound Read/Write in Renderer Process (discussed in previous section)
+- With OoB read/write, we enable MojoJS Binding in browser (discussed later)
+- With MojoJS Binding now enabled and exposed to JS context, the page can communicate with Mojo IPC interface directly.
+- Execute the UAF exploit to free FileWriterImpl (discussed in previous section), virtually bypassing sandbox and crashing the Browser Process.
+
+![Out-of-Bound screenshots](/post_assets/006/sandbox_idea.gif)
+
+
 ### Enabling MojoJS Binding
 
 We know that with UAF discovered in _Issue 1755_, we can crash the browser.
-But, we need to MojoJS binding enabled, and it is definitely not _cool_ to ask our target to enable the MojoJS flag when running their Chrome browser.
+But, we need to have MojoJS binding enabled, and it is definitely not _cool_ to ask our target to enable the MojoJS flag when running their Chrome browser.
 Instead, we are going to exploit the Out-of-Bound memory access bug to enable the Mojo Binding.
 
 Inside the Chrome source code, we can see that MojoJS feature is added to Javascript context in `RenderFrameImpl::DidCreateScriptContext`.
@@ -253,9 +265,6 @@ The steps are as follows:
 - Execute the UAF exploit to free FileWriterImpl.
 
 When the browser process use the stale pointer inside the unretained FileWriterImpl reference, the browser will crash.
-
-![Out-of-Bound screenshots](/post_assets/006/sandbox_idea.gif)
-
 
 We are reusing some of the code in the attached exploit at [Issue 1755 bug tracking](https://bugs.chromium.org/p/project-zero/issues/detail?id=1755).
 The simplified code is as follows:
@@ -335,7 +344,7 @@ Inside our custom `getInternalUUID`, we free the `FileWriterImpl` instance.
 When the function return and the execution is passed to `DoWrite`, the freed / stale pointer will be used, causing the browser to crash.
 
 
-### Demo
+## Sandbox Escape Demo
 
 ![Sandbox escape demo](/post_assets/006/sandbox_escape.gif)
 
@@ -349,11 +358,23 @@ As I first mentioned, this post acts to help me organize my thought while trying
 Therefore, I recommend reading [their post](googleprojectzero.blogspot.com/2019/04/virtually-unlimited-memory-escaping.html).
 
 
+## References
+- [Google Project Zero - Virtually Unlimited Memory: Escaping the Chrome Sandbox](https://googleprojectzero.blogspot.com/2019/04/virtually-unlimited-memory-escaping.html)
+- [Chromium bug tracker - issue 1755](https://bugs.chromium.org/p/project-zero/issues/detail?id=1755)
+- [Cvemitre - CVE-2019-5782](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-5782)
+- [Chromium docs - Getting chromium source code](https://www.chromium.org/developers/how-tos/get-the-code)
+- [Chromium design document - Multi process architecture](http://dev.chromium.org/developers/design-documents/multi-process-architecture)
+- [Chromium design document - How Blink works](https://docs.google.com/document/d/1aitSOucL0VHZa9Z2vbRJSyAIsAz24kX8LFByQ5xQnUg/edit)
+- [CVE-2019-5782 exploit PoC](https://github.com/vngkv123/aSiagaming/tree/master/Chrome-v8-906043)
+- [Chromium repo - Mojo IPC docs](https://chromium.googlesource.com/chromium/src.git/+/master/mojo/README.md)
+- [Stanford paper - The Security Architecture of the Chromium Browser](https://seclab.stanford.edu/websec/chromium/)
+
+
 <br>
 
 ---
 
-> Hi, find me on:
+> Hi, you can find me on:
 >
 > - twitter: [@adamyordan](https://twitter.com/adamyordan)
 > - github: [adamyordan](https://github.com/adamyordan)
