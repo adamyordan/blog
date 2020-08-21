@@ -7,7 +7,7 @@ The agent is a top-down shooter with a limited vision range, therefore it needs 
 Furthermore, it needs to make a rational decision to find the enemies and make necessary actions shoot them.
 "
 tags: [ai, devlog, hunter-ai, unity]
-draft: false
+draft: true
 ---
 
 

@@ -4,7 +4,7 @@ author: "Adam Jordan"
 description: ""
 tags: [security]
 date: 2020-02-02T17:40:00+08:00
-draft: true
+draft: false
 ---
 
 
@@ -285,7 +285,7 @@ async function CreateWriter() {
   // create writer from blink.mojom.FileSystemManagerPtr ...
 }
 
-async function Blob0() {
+async function RegisterBlob0() {
   // register blob_0 to blob registry ...
 }
 
@@ -312,7 +312,7 @@ async function crash(oob) {
     }
   };
 
-  Blob0();
+  RegisterBlob0();
 
   let blob_impl = new Blob0Impl();
   let blob_impl_ptr = new blink.mojom.BlobPtr();
@@ -323,7 +323,7 @@ async function crash(oob) {
 }
 ```
 
-In `index.html`, we are setting up Out-of-Bound read/write bug by exploiting CVE-2019-5782.
+In `index.html`, we are setting up the out-of-bound read/write bug by exploiting CVE-2019-5782.
 Then, at first we visit the page, we enable the Mojo binding, and reload the page.
 Now that the Mojo binding is enabled (not undefined), we call the `crash` function.
 
@@ -347,3 +347,13 @@ In this post, I discussed about the general idea how to escape the sandbox in Ch
 The idea presented in this post can still be leveraged to increase the damage, e.g. executing system call to execute a program (e.g. popup calculator).
 As I first mentioned, this post acts to help me organize my thought while trying to understand the exploit chain posted in Project Zero blog.
 Therefore, I recommend reading [their post](googleprojectzero.blogspot.com/2019/04/virtually-unlimited-memory-escaping.html).
+
+
+<br>
+
+---
+
+> Hi, find me on:
+>
+> - twitter: [@adamyordan](https://twitter.com/adamyordan)
+> - github: [adamyordan](https://github.com/adamyordan)

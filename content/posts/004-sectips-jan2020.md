@@ -7,7 +7,7 @@ how to use AT for backdoor persistence,
 and how to listen to meterpreter with a laptop behind NAT."
 tags: [security, sectips]
 date: 2020-01-24
-draft: false
+draft: true
 ---
 
 > **About SecTips**

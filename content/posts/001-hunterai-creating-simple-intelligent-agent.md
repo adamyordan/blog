@@ -5,7 +5,7 @@ date: 2019-09-16
 description: "Today, I try to make an intelligent agent that can hunt monster. I name this agent: **Hunter**.
     In this devlog, I will write the understanding and design process of a very simple intelligent agent."
 tags: [ai, devlog, hunter-ai]
-draft: false
+draft: true
 ---
 
 
