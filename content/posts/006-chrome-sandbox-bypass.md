@@ -376,5 +376,5 @@ Therefore, I recommend reading [their post](googleprojectzero.blogspot.com/2019/
 
 > Hi, you can find me on:
 >
-> - twitter: [@adamyordan](https://twitter.com/adamyordan)
+> - twitter: [@adamsense](https://twitter.com/adamsense)
 > - github: [adamyordan](https://github.com/adamyordan)
